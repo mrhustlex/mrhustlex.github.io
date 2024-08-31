@@ -1,0 +1,10 @@
+# Ignore the Jekyll build directory
+_site/
+
+# Ignore local cache and metadata files
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# Ignore Gemfile.lock if using GitHub Pages
+Gemfile.lock
