@@ -2,9 +2,16 @@
 main:
   - title: "About"
     url: /about/
+  - title: "Blog posts"
+    url: /blog/
+    subnav:
+      - title: "Innovative technology"
+        url: /tech
+      - title: "Start Ups"
+        url: /startup
   # - title: "Sample Posts"
   #   url: /year-archive/
   # - title: "Sample Collections"
   #   url: /collection-archive/
   # - title: "Sitemap"
-  #   url: /sitemap/
+  #   url: /sitemap/  
