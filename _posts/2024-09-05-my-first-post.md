@@ -2,7 +2,7 @@
 layout: single
 title: "My First Post"
 date: 2024-09-05
-categories: [blog, jekyll]
+categories: [technology, startup, investment]
 ---
 
 ## Welcome to My Blog
