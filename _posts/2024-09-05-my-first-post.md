@@ -2,7 +2,7 @@
 layout: single
 title: "My First Post"
 date: 2024-09-05
-categories: [technology, startup, investment]
+categories: [Technology, Startup, Investment]
 ---
 
 ## Welcome to My Blog

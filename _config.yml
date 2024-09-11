@@ -114,7 +114,7 @@ analytics:
 # Site Author
 author:
   name             : "Mr Hustle X"
-  avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
+  avatar           : "/assets/img/avatar.png"
   bio              : "I'm mrhustlex, a passionate software developer with a keen interest in [your main areas of interest or expertise, e.g., web development, machine learning, open source, etc.]."
   location         : "Anywhere on the internet"
   email            :
