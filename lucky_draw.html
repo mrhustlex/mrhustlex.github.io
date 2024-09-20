@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday to My Bae!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+            padding: 50px;
+        }
+        
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 30px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+        
+        #result {
+            font-size: 36px;
+            font-weight: bold;
+            margin-top: 30px;
+            color: #4CAF50; /* All results are green */
+        }
+
+        #history {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        input {
+            padding: 10px;
+            margin: 5px;
+            width: 80px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Happy Birthday to My Bae!</h1>
+    
+    <p>Set your lucky number range:</p>
+    <input type="number" id="minInput" placeholder="From" />
+    <input type="number" id="maxInput" placeholder="To" />
+    
+    <p>Click the button to get a lucky number!</p>
+    
+    <button onclick="generateLuckyNumber()">Click Me!</button>
+    
+    <div id="result"></div>
+    <div id="history"></div>
+    
+    <script>
+        let drawHistory = [];
+
+        function generateLuckyNumber() {
+            var min = parseInt(document.getElementById("minInput").value) || 0; // Default to 0 if input is empty
+            var max = parseInt(document.getElementById("maxInput").value) || 10000; // Default to 10000 if input is empty
+
+            // Ensure min is less than max
+            if (min > max) {
+                alert("Please ensure that 'From' is less than 'To'.");
+                return;
+            }
+
+            var luckyNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+
+            var resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = "Your lucky number is: " + luckyNumber + " HKD";
+
+            // Record the draw in history with timestamp
+            var timestamp = new Date().toLocaleString();
+            drawHistory.push(`${timestamp}: ${luckyNumber} HKD`);
+            updateHistory();
+        }
+
+        function updateHistory() {
+            var historyDiv = document.getElementById("history");
+            historyDiv.innerHTML = "<strong>Draw History:</strong><br>" + drawHistory.join("<br>");
+        }
+    </script>
+</body>
+</html>
