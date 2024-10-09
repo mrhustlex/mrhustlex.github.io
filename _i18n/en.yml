@@ -1,0 +1,7 @@
+language: en
+global:
+  title: "My Multilingual Site"
+  description: "Welcome to my website"
+nav:
+  home: "Home"
+  about: "About"

@@ -1,0 +1,8 @@
+language: zh-hk
+
+global:
+  title: '我的多語言網站'
+  description: '歡迎來到我的網站'
+navigation:
+  home: '首頁'
+  about: '關於'

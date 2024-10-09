@@ -1,10 +1,3 @@
----
-title: About
-layout: single
-permalink: /about/
-author_profile: true
----
-
 <h2>Hi there! 👋</h2>
 
 <p>I'm Mr. Hustle X, a passionate advocate for innovation and technology. My ultimate dream is to generate income from anywhere while exploring the world's most groundbreaking advancements and enhancing the quality of life for humanity.</p>

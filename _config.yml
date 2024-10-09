@@ -192,6 +192,8 @@ exclude:
   - tmp
   - /docs # ignore Minimal Mistakes /docs
   - /test # ignore Minimal Mistakes /test
+  - Gemfile
+  - Gemfile.lock
 keep_files:
   - .git
   - .svn
@@ -255,6 +257,8 @@ pagination:
     before: 2
     after: 2
 
+languages: ["en", "zh-hk"]
+exclude_from_localizations: ["javascript", "images", "css"]
 
 # Plugins (previously gems:)
 plugins:
@@ -263,6 +267,8 @@ plugins:
   - jekyll-gist
   - jekyll-feed
   - jekyll-include-cache
+  - jekyll-seo-tag
+  - jekyll-multiple-languages-plugin
 
 # mimic GitHub Pages with --safe
 whitelist:
