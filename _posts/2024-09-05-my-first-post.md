@@ -21,7 +21,7 @@ A simple tool for me to generate a whatsapp link without needing to add someoneâ
 
 ## 2. Girlfriend surprise generator
 
-- Link: [Lucky Draw](lucky_draw.html)
+- Link: [Lucky Draw](/lucky_draw.html)
 
 ## 3. Thai Learning App
 
