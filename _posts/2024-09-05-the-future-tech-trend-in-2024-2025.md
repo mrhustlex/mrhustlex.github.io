@@ -3,7 +3,6 @@ layout: single
 title: "The Future of Tech: Emerging Trends in 2024-2025"
 date: 2024-09-05
 categories: [Technology]
-published: false
 ---
 
 ## **The Future of Tech: Emerging Trends in 2024-2025**
