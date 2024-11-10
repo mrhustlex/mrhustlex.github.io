@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "The future of shopping"
+title: "The future of shopping - StyleSense AI"
 date: 2024-09-05
 categories: [Technology, Startup]
 ---
