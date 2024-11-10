@@ -1,6 +1,6 @@
 ---
 layout: single
-title: "How to build an app with AI without coding without coding knowledge? Thai language learning App"
+title: "Tools that I built for myself"
 date: 2024-09-05
 categories: [Technology, Startup]
 ---
