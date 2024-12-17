@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Coordinate Finder with Multi-Page Support</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style>
+        #pdfContainer {
+            position: relative;
+            border: 1px solid #ccc;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+        #coordinatesDisplay {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        canvas {
+            cursor: crosshair;
+        }
+        #controls {
+            text-align: center;
+            margin-top: 10px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Get PDF coordination for reportlab</h1>
+    <input type="file" id="fileInput" accept=".pdf">
+    <div id="pdfContainer"></div>
+    <div id="coordinatesDisplay">
+        Page: <span id="currentPage">1</span>/<span id="totalPages">1</span><br>
+        X: <span id="xCoord">0</span>, Y: <span id="yCoord">0</span>
+    </div>
+    <div id="controls">
+        <button id="prevPage">Previous Page</button>
+        <button id="nextPage">Next Page</button>
+    </div>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        const fileInput = document.getElementById('fileInput');
+        const pdfContainer = document.getElementById('pdfContainer');
+        const xCoord = document.getElementById('xCoord');
+        const yCoord = document.getElementById('yCoord');
+        const currentPageSpan = document.getElementById('currentPage');
+        const totalPagesSpan = document.getElementById('totalPages');
+        const prevPageButton = document.getElementById('prevPage');
+        const nextPageButton = document.getElementById('nextPage');
+
+        let pdfDoc = null; // Store the loaded PDF
+        let currentPage = 1; // Current page number
+        let scale = 1.5; // Scale for rendering
+        let canvas, context;
+
+        // Render a specific page
+        async function renderPage(pageNumber) {
+            const page = await pdfDoc.getPage(pageNumber);
+
+            // Prepare canvas
+            const viewport = page.getViewport({ scale });
+            if (!canvas) {
+                canvas = document.createElement('canvas');
+                context = canvas.getContext('2d');
+                pdfContainer.appendChild(canvas);
+            }
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            // Clear previous content before rendering a new page
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Render the page
+            await page.render({
+                canvasContext: context,
+                viewport: viewport,
+            }).promise;
+
+            // Add click event listener to get coordinates
+            canvas.addEventListener('click', (event) => {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left; // X coordinate
+                const y = canvas.height - (event.clientY - rect.top); // Invert Y coordinate
+
+                xCoord.textContent = Math.round(x);
+                yCoord.textContent = Math.round(y);
+
+                console.log(`Clicked at PDF coordinates: (${Math.round(x)}, ${Math.round(y)})`);
+            });
+
+            // Update current page display
+            currentPageSpan.textContent = currentPage;
+        }
+
+        // Load a PDF file
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const arrayBuffer = await file.arrayBuffer();
+            
+            // Load the PDF using PDF.js
+            pdfDoc = await pdfjsLib.getDocument(arrayBuffer).promise;
+
+            totalPagesSpan.textContent = pdfDoc.numPages; // Update total pages display
+
+            currentPage = 1; // Reset to the first page
+            renderPage(currentPage);
+        });
+
+        // Navigate to the previous page
+        prevPageButton.addEventListener('click', () => {
+            if (currentPage <= 1) return; // Prevent navigation before the first page
+            currentPage--;
+            renderPage(currentPage);
+        });
+
+        // Navigate to the next page
+        nextPageButton.addEventListener('click', () => {
+            if (currentPage >= pdfDoc.numPages) return; // Prevent navigation past the last page
+            currentPage++;
+            renderPage(currentPage);
+        });
+    </script>
+</body>
+</html>
