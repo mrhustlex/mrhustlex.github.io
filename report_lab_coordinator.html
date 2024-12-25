@@ -4,55 +4,122 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Coordinate Finder with Multi-Page Support</title>
-    <p>This tool helps users to get the coordinates for the PDF used in reportlab library</p>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Inter', sans-serif;
+            background: #f5f5f5;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 60% 40%;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .left-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .right-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
         #pdfContainer {
+            width: 100%;
             position: relative;
-            border: 1px solid #ccc;
-            margin: 20px auto;
-            max-width: 800px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        canvas {
+            cursor: crosshair;
+            width: 100%;
+            height: auto;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        button {
+            background: #0066ff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #0052cc;
+        }
+        .location-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
         }
         #coordinatesDisplay {
-            position: fixed;
-            top: 10px;
-            right: 10px;
             background: rgba(0, 0, 0, 0.7);
             color: white;
             padding: 10px;
             border-radius: 5px;
+            margin-bottom: 20px;
         }
-        canvas {
-            cursor: crosshair;
+        input[type="file"] {
+            margin-bottom: 20px;
         }
-        #controls {
-            text-align: center;
-            margin-top: 10px;
-        }
-        button {
-            margin: 5px;
-            padding: 10px 20px;
-            font-size: 16px;
+        .export-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Get PDF coordination for reportlab</h1>
+    <h1>PDF Coordinate Finder</h1>
     <input type="file" id="fileInput" accept=".pdf">
-    <div id="pdfContainer"></div>
-    <div id="coordinatesDisplay">
-        Page: <span id="currentPage">1</span>/<span id="totalPages">1</span><br>
-        X: <span id="xCoord">0</span>, Y: <span id="yCoord">0</span><br>
-        Original Size: <span id="pageSize">-</span>
-    </div>
-    <div id="controls">
-        <button id="prevPage">Previous Page</button>
-        <button id="nextPage">Next Page</button>
-    </div>
+    <div class="container">
+        <div class="left-panel">
+            <div id="pdfContainer"></div>
+            <div class="controls">
+                <button id="prevPage">Previous Page</button>
+                <button id="nextPage">Next Page</button>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div id="coordinatesDisplay">
+                Page: <span id="currentPage">1</span>/<span id="totalPages">1</span><br>
+                X: <span id="xCoord">0</span>, Y: <span id="yCoord">0</span><br>
+                Original Size: <span id="pageSize">-</span>
+            </div>
+            <div id="markedLocations">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>Marked Locations</h3>
+                    <button id="removeAll">Remove All</button>
+                </div>
+                <div id="locationsList"></div>
+            </div>
 
+            <div class="export-buttons">
+                <button id="exportJSON">Export to JSON</button>
+                <button id="exportCSV">Export to CSV</button>
+            </div>
+        </div>
+    </div>
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
         const fileInput = document.getElementById('fileInput');
         const pdfContainer = document.getElementById('pdfContainer');
         const xCoord = document.getElementById('xCoord');
@@ -62,11 +129,16 @@
         const pageSizeSpan = document.getElementById('pageSize');
         const prevPageButton = document.getElementById('prevPage');
         const nextPageButton = document.getElementById('nextPage');
-
+        const font = "bold 12px Arial-Black";
+        const fillStyle = '#8B0000';
+        const textAlign = 'center';
+        const textBaseline = 'middle';
         let pdfDoc = null;
         let currentPage = 1;
-        let scale = 1.5;
+        let scale = 1;
         let canvas, context;
+        let textsForPDF = {};
+        let markedLocations = [];
 
         async function renderPage(pageNumber) {
             const page = await pdfDoc.getPage(pageNumber);
@@ -78,10 +150,9 @@
                 context = canvas.getContext('2d');
                 pdfContainer.appendChild(canvas);
             }
-            
+
             canvas.height = viewport.height;
             canvas.width = viewport.width;
-            
             context.clearRect(0, 0, canvas.width, canvas.height);
 
             await page.render({
@@ -91,28 +162,267 @@
 
             pageSizeSpan.textContent = `${Math.round(originalViewport.width)} x ${Math.round(originalViewport.height)}`;
 
+
+
             canvas.onclick = async (event) => {
                 const rect = canvas.getBoundingClientRect();
+                // Get click position relative to canvas
                 const x = event.clientX - rect.left;
                 const y = event.clientY - rect.top;
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                // Convert to PDF coordinates
+                const pdfX = Math.round((x * originalViewport.width) / canvas.width*scaleX);
+                const pdfY = Math.round(((rect.height - (event.clientY - rect.top)) * originalViewport.height) / canvas.height*scaleY);
                 
-                const scaleFactor = originalViewport.width / canvas.width;
-                const pdfX = Math.round(x / scale);
-                const pdfY = Math.round(originalViewport.height - (y / scale));
-
-                xCoord.textContent = pdfX;
-                yCoord.textContent = pdfY;
-
-                console.log(`ReportLab coordinates: (${pdfX}, ${pdfY})`);
+                // Draw marker on canvas
+                const displayX = (x * canvas.width) / rect.width;
+                const displayY = (y * canvas.height) / rect.height;
+                
+                context.save();
+                context.font = font;
+                context.fillStyle = fillStyle;
+                context.textAlign = textAlign;
+                context.textBaseline = textBaseline;
+                context.fillText(markedLocations.length + 1, displayX, displayY);
+                context.restore();
+                
+                markedLocations.push({
+                    page: currentPage,
+                    x: pdfX,
+                    y: pdfY
+                });
+                
+                updateLocationsList();
             };
 
+
+            canvas.addEventListener('mousemove', (event) => {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                // Invert the y-coordinate to start from bottom
+                const y = rect.height - (event.clientY - rect.top);
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                
+                // Convert to PDF coordinates
+                const pdfX = Math.round((x * originalViewport.width) / canvas.width*scaleX);
+                const pdfY = Math.round((y * originalViewport.height) / canvas.height*scaleY);
+
+                
+                // Update coordinate display
+                xCoord.textContent = pdfX;
+                yCoord.textContent = pdfY;
+             });
+
+
             currentPageSpan.textContent = currentPage;
+
+            markedLocations.forEach((location, idx) => {
+                if (location.page === currentPage) {
+                    const rect = canvas.getBoundingClientRect();
+                    const scaleX = canvas.width / rect.width;
+                    const scaleY = canvas.height / rect.height;
+                    
+                    // Calculate display coordinates from PDF coordinates
+                    const displayX = location.x * scale;
+                    // Fix: Invert Y coordinate for display
+                    const displayY = canvas.height - (location.y * scale);
+                    context.save();
+                    context.font = font;
+                    context.fillStyle = fillStyle;
+                    context.textAlign = textAlign;
+                    context.textBaseline = textBaseline;
+                    context.fillText(idx + 1, displayX, displayY);
+                    context.restore();
+            }
+        });
+
         }
+
+        document.getElementById('removeAll').addEventListener('click', () => {
+            markedLocations = [];
+            
+            // Clear canvas and redraw current page
+            pdfDoc.getPage(currentPage).then(page => {
+                const viewport = page.getViewport({ scale });
+                return page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                }).promise;
+            });
+            
+            updateLocationsList();
+        });
+
+
+        function updateLocationsList() {
+            const locationsList = document.getElementById('locationsList');
+            locationsList.innerHTML = '';
+            markedLocations.forEach((location, index) => {
+                const locationDiv = document.createElement('div');
+                locationDiv.style.margin = '10px 0';
+                locationDiv.innerHTML = `
+                    <div style="border: 1px solid #ccc; padding: 10px; margin: 5px 0;">
+                        <strong>Location ${index + 1} (Page ${location.page}):</strong>
+                        <div>X: ${location.x}, Y: ${location.y}</div>
+                        <input type="text" placeholder="Enter text" class="locationText_${index}">
+                        Font size  
+                        <input type="number" value="12" min="8" max="72" class="locationFontSize_${index}">
+                        <input type="color" value="#000000" class="locationColor_${index}">
+                        <select class="locationFont_${index}">
+                            <option value="Helvetica">Helvetica</option>
+                            <option value="Helvetica-Bold">Helvetica Bold</option>
+                            <option value="Times-Roman">Times Roman</option>
+                            <option value="Courier">Courier</option>
+                        </select>
+                        <button onclick="removeLocation(${index})">Remove</button>
+                    </div>`;
+                locationsList.appendChild(locationDiv);
+
+                const inputs = [
+                    `.locationText_${index}`,
+                    `.locationFontSize_${index}`,
+                    `.locationColor_${index}`,
+                    `.locationFont_${index}`
+                ];
+                inputs.forEach(selector => {
+                    locationDiv.querySelector(selector).addEventListener('change', () => {
+                        addTextAtLocation(index);
+                    });
+                });
+            });
+        }
+
+        function addTextAtLocation(index) {
+            const location = markedLocations[index];
+            const text = document.querySelector(`.locationText_${index}`).value;
+            const fontSize = parseInt(document.querySelector(`.locationFontSize_${index}`).value);
+            const fontFamily = document.querySelector(`.locationFont_${index}`).value;
+            const color = document.querySelector(`.locationColor_${index}`).value;
+
+            if (!text) {
+                alert('Please enter text');
+                return;
+            }
+
+            const pageIndex = location.page - 1;
+            if (!textsForPDF[pageIndex]) {
+                textsForPDF[pageIndex] = [];
+            }
+
+            const hex = color.replace('#', '');
+            const r = parseInt(hex.substring(0, 2), 16) / 255;
+            const g = parseInt(hex.substring(2, 4), 16) / 255;
+            const b = parseInt(hex.substring(4, 6), 16) / 255;
+
+            textsForPDF[pageIndex].push({
+                text,
+                x: location.x,
+                y: location.y,
+                fontSize,
+                fontFamily,
+                color: [r, g, b]
+            });
+        }
+
+        function removeLocation(index) {
+            markedLocations.splice(index, 1);
+            pdfDoc.getPage(currentPage).then(page => {
+                const originalViewport = page.getViewport({ scale: 1.0 });
+                const viewport = page.getViewport({ scale });
+                return page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                }).promise.then(() => {
+                    markedLocations.forEach((location, idx) => {
+                        if (location.page === currentPage) {
+                            const x = location.x * scale;
+                            const y = (originalViewport.height - location.y) * scale;
+                            context.font = font;
+                            context.fillStyle = fillStyle;
+                            context.textAlign = textAlign;
+                            context.textBaseline = textBaseline;    
+                            context.fillText(idx + 1, x, y);
+                        }
+                    });
+                });
+            });
+            updateLocationsList();
+        }
+
+        function downloadFile(content, filename, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function generateTextsForPDF() {
+            let textsForPDF = {};
+            markedLocations.forEach((location, index) => {
+                const text = document.querySelector(`.locationText_${index}`)?.value;
+                const fontSize = parseInt(document.querySelector(`.locationFontSize_${index}`)?.value);
+                const fontFamily = document.querySelector(`.locationFont_${index}`)?.value;
+                const color = document.querySelector(`.locationColor_${index}`)?.value;
+
+                if (text) {
+                    const pageIndex = location.page - 1;
+                    if (!textsForPDF[pageIndex]) {
+                        textsForPDF[pageIndex] = [];
+                    }
+
+                    const hex = color.replace('#', '');
+                    const r = parseInt(hex.substring(0, 2), 16) / 255;
+                    const g = parseInt(hex.substring(2, 4), 16) / 255;
+                    const b = parseInt(hex.substring(4, 6), 16) / 255;
+
+                    textsForPDF[pageIndex].push({
+                        text,
+                        x: location.x,
+                        y: location.y,
+                        fontSize,
+                        fontFamily,
+                        color: [r, g, b]
+                    });
+                }
+            });
+            return textsForPDF;
+        }
+
+        document.getElementById('exportJSON').addEventListener('click', () => {
+            const textsForPDF = generateTextsForPDF();
+            if(Object.keys(textsForPDF).length === 0) {
+                alert("No item added");
+                return;
+            }
+            const jsonContent = JSON.stringify(textsForPDF, null, 2);
+            downloadFile(jsonContent, 'coordinates.json', 'application/json');
+        });
+
+        document.getElementById('exportCSV').addEventListener('click', () => {
+            const textsForPDF = generateTextsForPDF();
+            if(Object.keys(textsForPDF).length === 0) {
+                alert("No item added");
+                return;
+            }
+            let csvContent = 'page,text,x,y,font_family,font_size,color_r,color_g,color_b\n';
+            for (let page in textsForPDF) {
+                textsForPDF[page].forEach(item => {
+                    csvContent += `${page},"${item.text}",${item.x},${item.y},"${item.fontFamily}",${item.fontSize},${item.color[0]},${item.color[1]},${item.color[2]}\n`;
+                });
+            }
+            downloadFile(csvContent, 'coordinates.csv', 'text/csv');
+        });
 
         fileInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
-
             const arrayBuffer = await file.arrayBuffer();
             pdfDoc = await pdfjsLib.getDocument(arrayBuffer).promise;
             totalPagesSpan.textContent = pdfDoc.numPages;
