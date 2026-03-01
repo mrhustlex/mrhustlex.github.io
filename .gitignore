@@ -1,10 +1,11 @@
-# Ignore the Jekyll build directory
-_site/
+# macOS
+.DS_Store
 
-# Ignore local cache and metadata files
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
+# Editor
+.vscode/
+.idea/
 
-# Ignore Gemfile.lock if using GitHub Pages
-Gemfile.lock
+# Temporary files
+*.tmp
+*.bak
+*~
