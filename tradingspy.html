@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>TradingSpy - AI-Powered Trading Research Workstation</title>
+    <meta name="title" content="TradingSpy - AI-Powered Trading Research Workstation">
+    <meta name="description" content="Local-first AI trading research: market heatmaps, news catalysts, strategy generation, Backtrader backtests, and transparent agent runs. Fully open-source, zero data privacy concerns.">
+    <meta name="keywords" content="trading AI, backtesting, stock market, Backtrader, AI strategy, market heatmaps, open source trading, local-first, trading research, loop engineering">
+    <meta name="author" content="Mr Hustle X">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="https://mrhustlex.github.io/tradingspy">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mrhustlex.github.io/tradingspy">
+    <meta property="og:title" content="TradingSpy - AI-Powered Trading Research">
+    <meta property="og:description" content="Local-first AI trading research workstation. Market heatmaps, strategy generation, Backtrader backtests, and transparent agent runs.">
+    <meta property="og:image" content="https://mrhustlex.github.io/tradingspy-og.png">
+    <meta property="og:site_name" content="TradingSpy">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://mrhustlex.github.io/tradingspy">
+    <meta property="twitter:title" content="TradingSpy - AI-Powered Trading Research">
+    <meta property="twitter:description" content="Local-first AI trading research workstation. Market heatmaps, strategy generation, Backtrader backtests, and transparent agent runs.">
+    <meta property="twitter:image" content="https://mrhustlex.github.io/tradingspy-og.png">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "TradingSpy",
+      "description": "Local-first AI trading research workstation with market heatmaps, strategy generation, Backtrader backtests, and transparent agent runs.",
+      "url": "https://github.com/mrhustlex/TradingSpy-TradingAgentService",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Any (Docker)",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Mr Hustle X",
+        "url": "https://github.com/mrhustlex"
+      }
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: { 900: '#0a0e1a', 800: '#111827', 700: '#1e293b', 600: '#334155' },
+                        cyan: { 400: '#22d3ee', 500: '#06b6d4' },
+                        indigo: { 400: '#818cf8', 500: '#6366f1' },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #06b6d4, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-glow:hover {
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.15);
+        }
+        .hero-glow {
+            background: radial-gradient(ellipse at center, rgba(6, 182, 212, 0.08) 0%, transparent 70%);
+        }
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+    </style>
+</head>
+<body class="bg-dark-900 text-gray-100">
+
+    <!-- Nav -->
+    <nav class="bg-dark-800/80 backdrop-blur-md border-b border-dark-600/50 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-indigo-500 flex items-center justify-center">
+                        <i class="fas fa-chart-line text-white text-sm"></i>
+                    </div>
+                    <span class="text-xl font-bold">TradingSpy</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="#features" class="text-gray-400 hover:text-white transition text-sm font-medium">Features</a>
+                    <a href="#agents" class="text-gray-400 hover:text-white transition text-sm font-medium">Agents</a>
+                    <a href="#setup" class="text-gray-400 hover:text-white transition text-sm font-medium">Setup</a>
+                    <a href="https://github.com/mrhustlex/TradingSpy-TradingAgentService" target="_blank" class="text-gray-400 hover:text-white transition">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="relative overflow-hidden">
+        <div class="hero-glow absolute inset-0"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
+            <div class="inline-flex items-center space-x-2 bg-dark-700 border border-dark-600 rounded-full px-4 py-1.5 mb-8">
+                <span class="w-2 h-2 rounded-full bg-green-400 pulse-dot"></span>
+                <span class="text-sm text-gray-400">Fully Open Source &bull; Local-First &bull; Free</span>
+            </div>
+            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold mb-6 tracking-tight">
+                AI-Powered Trading<br><span class="gradient-text">Research That Validates</span><br>Before You Risk a Dollar
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto mb-10 leading-relaxed">
+                Local-first AI trading research: market heatmaps, news catalysts, strategy generation, Backtrader backtests, and transparent agent runs — all in one Docker app. No brokerage connection. No hosted accounts. Your data stays on your machine.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <a href="https://github.com/mrhustlex/TradingSpy-TradingAgentService" target="_blank" class="bg-gradient-to-r from-cyan-500 to-indigo-500 text-white px-8 py-3.5 rounded-lg font-semibold hover:opacity-90 transition inline-flex items-center space-x-2">
+                    <i class="fab fa-github"></i>
+                    <span>View on GitHub</span>
+                </a>
+                <a href="#setup" class="border border-dark-600 text-gray-300 px-8 py-3.5 rounded-lg font-semibold hover:border-gray-500 hover:text-white transition">
+                    Get Started
+                </a>
+                <a href="https://buymeacoffee.com/mrhustlex" target="_blank" class="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 px-8 py-3.5 rounded-lg font-semibold hover:bg-yellow-500/20 transition inline-flex items-center space-x-2">
+                    <i class="fas fa-mug-hot"></i>
+                    <span>Buy Me a Coffee</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- What it does -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4">What Could You Do with TradingSpy?</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto">One workspace for market research, strategy generation, backtesting, and AI-powered analysis.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-dark-800 border border-dark-600/50 rounded-xl p-6 card-glow transition-all duration-300">
+                <div class="w-12 h-12 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-4">
+                    <i class="fas fa-comments text-cyan-400 text-xl"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Trading Companion</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Chat with your market data, strategies, news, heatmaps, and backtest history.</p>
+            </div>
+            <div class="bg-dark-800 border border-dark-600/50 rounded-xl p-6 card-glow transition-all duration-300">
+                <div class="w-12 h-12 rounded-lg bg-indigo-500/10 flex items-center justify-center mb-4">
+                    <i class="fas fa-rocket text-indigo-400 text-xl"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Strategy Researcher</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Generate and iterate strategies until one beats the baseline. Loop engineering at its finest.</p>
+            </div>
+            <div class="bg-dark-800 border border-dark-600/50 rounded-xl p-6 card-glow transition-all duration-300">
+                <div class="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center mb-4">
+                    <i class="fas fa-chart-area text-green-400 text-xl"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Trend Prediction</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Statistical calculations and LLM reasoning with support/resistance lines to simulate expected trends.</p>
+            </div>
+            <div class="bg-dark-800 border border-dark-600/50 rounded-xl p-6 card-glow transition-all duration-300">
+                <div class="w-12 h-12 rounded-lg bg-amber-500/10 flex items-center justify-center mb-4">
+                    <i class="fas fa-bolt text-amber-400 text-xl"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Signal Analysis</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Analyze real-time movement with peer stocks, insider trading data, and technical indicators.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="bg-dark-800/50 border-y border-dark-600/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4">Key Features</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Traditional data visualisation for quick results, combined with loop-engineering-powered agents.</p>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-xl p-6">
+                    <i class="fas fa-globe text-cyan-400 text-2xl mb-3"></i>
+                    <h3 class="font-bold mb-2">Market Intelligence</h3>
+                    <p class="text-gray-400 text-sm">Real-time quotes, sector heatmaps, industry performance, insider activity, news search, and fundamentals — all in one query.</p>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-xl p-6">
+                    <i class="fas fa-code text-indigo-400 text-2xl mb-3"></i>
+                    <h3 class="font-bold mb-2">AI Strategy Generation</h3>
+                    <p class="text-gray-400 text-sm">Describe a trading thesis in plain English; get a working Backtrader strategy with syntax and runtime validation.</p>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-xl p-6">
+                    <i class="fas fa-flask text-green-400 text-2xl mb-3"></i>
+                    <h3 class="font-bold mb-2">Automated Backtesting</h3>
+                    <p class="text-gray-400 text-sm">Every generated strategy is backtested against downloaded candles with configurable parameter sweeps.</p>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-xl p-6">
+                    <i class="fas fa-trophy text-yellow-400 text-2xl mb-3"></i>
+                    <h3 class="font-bold mb-2">Benchmark Comparison</h3>
+                    <p class="text-gray-400 text-sm">Every result is compared to buy-and-hold and any saved strategy. Underperformers are rejected automatically.</p>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-xl p-6">
+                    <i class="fas fa-sync-alt text-pink-400 text-2xl mb-3"></i>
+                    <h3 class="font-bold mb-2">Loop Engineering</h3>
+                    <p class="text-gray-400 text-sm">Set a goal and the agent iterates until it succeeds — no babysitting required.</p>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-xl p-6">
+                    <i class="fas fa-eye text-purple-400 text-2xl mb-3"></i>
+                    <h3 class="font-bold mb-2">Transparent Agent Runs</h3>
+                    <p class="text-gray-400 text-sm">Every tool call, validation failure, rejection reason, and accepted result is logged and visible in the Task Center.</p>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-xl p-6">
+                    <i class="fas fa-server text-cyan-400 text-2xl mb-3"></i>
+                    <h3 class="font-bold mb-2">Multi-Provider LLM</h3>
+                    <p class="text-gray-400 text-sm">Google AI Studio, Mistral, OpenRouter, NVIDIA, LiteLLM, Ollama (local), AWS Bedrock, GCP Vertex AI, Azure OpenAI.</p>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-xl p-6">
+                    <i class="fas fa-plug text-indigo-400 text-2xl mb-3"></i>
+                    <h3 class="font-bold mb-2">OpenAI-Compatible API</h3>
+                    <p class="text-gray-400 text-sm">Use TradingSpy as a backend for scripts, other agents, or custom integrations via /v1/chat/completions.</p>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-xl p-6">
+                    <i class="fas fa-lock text-green-400 text-2xl mb-3"></i>
+                    <h3 class="font-bold mb-2">Local-First Architecture</h3>
+                    <p class="text-gray-400 text-sm">All data stored locally. No external accounts, no telemetry, no cloud dependency. Your data stays on your machine.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Agents -->
+    <section id="agents" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4">AI Agents</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto">Each agent is purpose-built for a specific task. Pick one or let the system route your request automatically.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-6">
+            <div class="bg-dark-800 border border-dark-600/50 rounded-xl p-6 card-glow transition-all duration-300">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 rounded-lg bg-cyan-500/15 flex items-center justify-center">
+                        <i class="fas fa-sync-alt text-cyan-400"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">Strategy Race</h3>
+                </div>
+                <div class="bg-dark-900/60 rounded-lg p-3 mb-4 border border-dark-600/30">
+                    <p class="text-xs text-gray-500 mb-1">Example prompt</p>
+                    <p class="text-sm text-gray-300 font-mono">"Generate until it beats buy and hold for QQQ. Use daily candles."</p>
+                </div>
+                <p class="text-gray-400 text-sm leading-relaxed">Generates strategies from the AI Strategy Studio, backtests them, and loops until one beats the target benchmark. Supports improving a previous version or racing against a custom baseline.</p>
+            </div>
+            <div class="bg-dark-800 border border-dark-600/50 rounded-xl p-6 card-glow transition-all duration-300">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 rounded-lg bg-indigo-500/15 flex items-center justify-center">
+                        <i class="fas fa-chart-line text-indigo-400"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">Signal Analysis</h3>
+                </div>
+                <div class="bg-dark-900/60 rounded-lg p-3 mb-4 border border-dark-600/30">
+                    <p class="text-xs text-gray-500 mb-1">Example prompt</p>
+                    <p class="text-sm text-gray-300 font-mono">"Predict the next move for btc-usd for daily interval"</p>
+                </div>
+                <p class="text-gray-400 text-sm leading-relaxed">Reads recent bars and support/resistance levels to predict the price trend.</p>
+            </div>
+            <div class="bg-dark-800 border border-dark-600/50 rounded-xl p-6 card-glow transition-all duration-300">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 rounded-lg bg-green-500/15 flex items-center justify-center">
+                        <i class="fas fa-search text-green-400"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">Stock Screening</h3>
+                </div>
+                <div class="bg-dark-900/60 rounded-lg p-3 mb-4 border border-dark-600/30">
+                    <p class="text-xs text-gray-500 mb-1">Example prompt</p>
+                    <p class="text-sm text-gray-300 font-mono">"Scan AI stocks until you find 10 which are good enough on fundamentals"</p>
+                </div>
+                <p class="text-gray-400 text-sm leading-relaxed">Screens a universe for valuation/growth/profitability candidates, enriches passing names with market context, news, options, and insider summaries.</p>
+            </div>
+            <div class="bg-dark-800 border border-dark-600/50 rounded-xl p-6 card-glow transition-all duration-300">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 rounded-lg bg-amber-500/15 flex items-center justify-center">
+                        <i class="fas fa-comments text-amber-400"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">Chat</h3>
+                </div>
+                <div class="bg-dark-900/60 rounded-lg p-3 mb-4 border border-dark-600/30">
+                    <p class="text-xs text-gray-500 mb-1">Example prompt</p>
+                    <p class="text-sm text-gray-300 font-mono">"Give me a daily market brief with breadth, strongest and weakest industries."</p>
+                </div>
+                <p class="text-gray-400 text-sm leading-relaxed">Pulls data from yfinance to summarize daily market information.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start -->
+    <section id="setup" class="bg-dark-800/50 border-y border-dark-600/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4">Quick Start</h2>
+                <p class="text-gray-400">Up and running in 3 steps with Docker.</p>
+            </div>
+            <div class="max-w-3xl mx-auto space-y-8">
+                <!-- Step 1 -->
+                <div class="flex items-start space-x-5">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-indigo-500 flex items-center justify-center font-bold text-white text-sm">1</div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg mb-2">Clone & Configure</h3>
+                        <div class="bg-dark-900 border border-dark-600/30 rounded-lg p-4 font-mono text-sm text-gray-300 overflow-x-auto">
+                            <span class="text-gray-500">$</span> git clone https://github.com/mrhustlex/TradingSpy-TradingAgentService.git<br>
+                            <span class="text-gray-500">$</span> cd TradingSpy-TradingAgentService<br>
+                            <span class="text-gray-500">$</span> cp .env.example .env<br>
+                            <span class="text-gray-500">#</span> <span class="text-gray-500">Add your LLM provider key to .env</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Step 2 -->
+                <div class="flex items-start space-x-5">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-indigo-500 flex items-center justify-center font-bold text-white text-sm">2</div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg mb-2">Launch</h3>
+                        <div class="bg-dark-900 border border-dark-600/30 rounded-lg p-4 font-mono text-sm text-gray-300 overflow-x-auto">
+                            <span class="text-gray-500">$</span> docker compose up -d --build
+                        </div>
+                    </div>
+                </div>
+                <!-- Step 3 -->
+                <div class="flex items-start space-x-5">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-indigo-500 flex items-center justify-center font-bold text-white text-sm">3</div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg mb-2">Open</h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <a href="http://localhost:3000" class="bg-dark-900 border border-dark-600/30 rounded-lg p-3 text-center hover:border-cyan-500/50 transition">
+                                <p class="text-sm font-bold">App</p>
+                                <p class="text-xs text-gray-500">:3000</p>
+                            </a>
+                            <a href="http://localhost:8000/docs" class="bg-dark-900 border border-dark-600/30 rounded-lg p-3 text-center hover:border-cyan-500/50 transition">
+                                <p class="text-sm font-bold">API Docs</p>
+                                <p class="text-xs text-gray-500">:8000/docs</p>
+                            </a>
+                            <a href="http://localhost:8000" class="bg-dark-900 border border-dark-600/30 rounded-lg p-3 text-center hover:border-cyan-500/50 transition">
+                                <p class="text-sm font-bold">Backend</p>
+                                <p class="text-xs text-gray-500">:8000</p>
+                            </a>
+                            <a href="http://localhost:8080" class="bg-dark-900 border border-dark-600/30 rounded-lg p-3 text-center hover:border-cyan-500/50 transition">
+                                <p class="text-sm font-bold">SearXNG</p>
+                                <p class="text-xs text-gray-500">:8080</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-12">
+                <p class="text-gray-500 text-sm mb-4">Or run manually without Docker — Python 3.11 + Node.js 22</p>
+                <a href="https://github.com/mrhustlex/TradingSpy-TradingAgentService#manual-development" target="_blank" class="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition">
+                    View manual setup instructions <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Sources & Markets -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="grid lg:grid-cols-2 gap-12">
+            <div>
+                <h2 class="text-3xl font-bold mb-6">Data Sources</h2>
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-chart-bar text-cyan-400 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold">Yahoo Finance</h4>
+                            <p class="text-gray-400 text-sm">Price quotes, OHLCV candles, fundamentals, insider transactions, analyst recommendations, earnings dates, options chains. Primary data backbone.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-search text-indigo-400 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold">SearXNG</h4>
+                            <p class="text-gray-400 text-sm">Privacy-respecting metasearch for financial news, analyst opinions, macro events, and catalyst research. Runs locally.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-file-alt text-green-400 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold">arXiv</h4>
+                            <p class="text-gray-400 text-sm">Academic papers on quantitative finance and algorithmic trading. Abstract and full-text PDF reading.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-cogs text-amber-400 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold">Backtrader</h4>
+                            <p class="text-gray-400 text-sm">Local backtesting engine for strategy execution, parameter optimization, and benchmark comparison.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h2 class="text-3xl font-bold mb-6">Supported Markets</h2>
+                <p class="text-gray-400 mb-4">Any Yahoo Finance-compatible symbol works.</p>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-dark-800 border border-dark-600/30 rounded-lg p-3">
+                        <p class="font-bold text-sm">United States</p>
+                        <p class="text-gray-500 text-xs font-mono">AAPL, NVDA, QQQ, SPY</p>
+                    </div>
+                    <div class="bg-dark-800 border border-dark-600/30 rounded-lg p-3">
+                        <p class="font-bold text-sm">London</p>
+                        <p class="text-gray-500 text-xs font-mono">AZN.L, HSBA.L</p>
+                    </div>
+                    <div class="bg-dark-800 border border-dark-600/30 rounded-lg p-3">
+                        <p class="font-bold text-sm">Hong Kong</p>
+                        <p class="text-gray-500 text-xs font-mono">0700.HK</p>
+                    </div>
+                    <div class="bg-dark-800 border border-dark-600/30 rounded-lg p-3">
+                        <p class="font-bold text-sm">Japan</p>
+                        <p class="text-gray-500 text-xs font-mono">7203.T</p>
+                    </div>
+                    <div class="bg-dark-800 border border-dark-600/30 rounded-lg p-3">
+                        <p class="font-bold text-sm">Crypto</p>
+                        <p class="text-gray-500 text-xs font-mono">BTC-USD, ETH-USD</p>
+                    </div>
+                    <div class="bg-dark-800 border border-dark-600/30 rounded-lg p-3">
+                        <p class="font-bold text-sm">Commodities</p>
+                        <p class="text-gray-500 text-xs font-mono">GC=F, CL=F</p>
+                    </div>
+                </div>
+                <p class="text-gray-500 text-xs mt-3">+ India, Canada, Australia, Germany, France, UK, Eurozone, China</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- LLM Providers -->
+    <section class="bg-dark-800/50 border-y border-dark-600/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4">LLM Providers</h2>
+                <p class="text-gray-400">Use any provider. Configure in .env or the app Settings page.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-lg px-5 py-3 flex items-center space-x-2">
+                    <i class="fas fa-brain text-blue-400"></i>
+                    <span class="text-sm font-medium">Google AI Studio</span>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-lg px-5 py-3 flex items-center space-x-2">
+                    <i class="fas fa-wind text-orange-400"></i>
+                    <span class="text-sm font-medium">Mistral</span>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-lg px-5 py-3 flex items-center space-x-2">
+                    <i class="fas fa-route text-purple-400"></i>
+                    <span class="text-sm font-medium">OpenRouter</span>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-lg px-5 py-3 flex items-center space-x-2">
+                    <i class="fas fa-microchip text-green-400"></i>
+                    <span class="text-sm font-medium">NVIDIA</span>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-lg px-5 py-3 flex items-center space-x-2">
+                    <i class="fas fa-exchange-alt text-yellow-400"></i>
+                    <span class="text-sm font-medium">LiteLLM</span>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-lg px-5 py-3 flex items-center space-x-2">
+                    <i class="fas fa-circle text-cyan-400" style="font-size: 0.6rem;"></i>
+                    <span class="text-sm font-medium">Ollama (Local)</span>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-lg px-5 py-3 flex items-center space-x-2">
+                    <i class="fab fa-aws text-orange-400"></i>
+                    <span class="text-sm font-medium">AWS Bedrock</span>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-lg px-5 py-3 flex items-center space-x-2">
+                    <i class="fab fa-google text-blue-400"></i>
+                    <span class="text-sm font-medium">GCP Vertex AI</span>
+                </div>
+                <div class="bg-dark-900/60 border border-dark-600/30 rounded-lg px-5 py-3 flex items-center space-x-2">
+                    <i class="fab fa-microsoft text-blue-400"></i>
+                    <span class="text-sm font-medium">Azure OpenAI</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Safety -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-3xl font-bold mb-6 text-center">Safety & Limits</h2>
+            <div class="bg-dark-800 border border-dark-600/50 rounded-xl p-6 space-y-3">
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-exclamation-triangle text-yellow-400 mt-0.5"></i>
+                    <p class="text-gray-300 text-sm">TradingSpy is for research and education only. It is not financial advice.</p>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-exclamation-triangle text-yellow-400 mt-0.5"></i>
+                    <p class="text-gray-300 text-sm">Backtests can overfit and do not predict future returns.</p>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-exclamation-triangle text-yellow-400 mt-0.5"></i>
+                    <p class="text-gray-300 text-sm">Generated strategy Python is executed locally and is not sandboxed. Review it before running.</p>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-lock text-green-400 mt-0.5"></i>
+                    <p class="text-gray-300 text-sm">All services bind to localhost. No telemetry. No cloud dependency.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="bg-gradient-to-r from-cyan-500/10 to-indigo-500/10 border-y border-dark-600/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4">Ready to Start Researching?</h2>
+            <p class="text-gray-400 max-w-xl mx-auto mb-8">Clone the repo, spin up Docker, and start exploring markets and strategies in minutes.</p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <a href="https://github.com/mrhustlex/TradingSpy-TradingAgentService" target="_blank" class="bg-gradient-to-r from-cyan-500 to-indigo-500 text-white px-8 py-3.5 rounded-lg font-semibold hover:opacity-90 transition inline-flex items-center space-x-2">
+                    <i class="fab fa-github"></i>
+                    <span>Get Started on GitHub</span>
+                </a>
+                <a href="https://buymeacoffee.com/mrhustlex" target="_blank" class="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 px-8 py-3.5 rounded-lg font-semibold hover:bg-yellow-500/20 transition inline-flex items-center space-x-2">
+                    <i class="fas fa-mug-hot"></i>
+                    <span>Buy Me a Coffee</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark-800 border-t border-dark-600/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+                <div class="flex items-center space-x-2 text-gray-500 text-sm">
+                    <div class="w-6 h-6 rounded bg-gradient-to-br from-cyan-500 to-indigo-500 flex items-center justify-center">
+                        <i class="fas fa-chart-line text-white text-xs"></i>
+                    </div>
+                    <span>TradingSpy &copy; 2026</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="https://github.com/mrhustlex/TradingSpy-TradingAgentService" target="_blank" class="text-gray-500 hover:text-white transition text-sm">
+                        <i class="fab fa-github mr-1"></i> GitHub
+                    </a>
+                    <a href="https://buymeacoffee.com/mrhustlex" target="_blank" class="text-gray-500 hover:text-yellow-400 transition text-sm">
+                        <i class="fas fa-mug-hot mr-1"></i> Buy Me a Coffee
+                    </a>
+                    <a href="https://mrhustlex.github.io" class="text-gray-500 hover:text-white transition text-sm">
+                        <i class="fas fa-home mr-1"></i> Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
